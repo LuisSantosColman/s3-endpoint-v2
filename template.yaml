@@ -21,7 +21,7 @@ Resources:
           - "*"      
 
   ## Lambda functions
-  UploadRequestFunction:
+  MiroBannersAcceptersRequestFunction:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Type: AWS::Serverless::Function 
     Properties:
@@ -65,11 +65,18 @@ Resources:
             - HEAD
           AllowedOrigins:
             - "*"
-      Policies:
-      ## This permission will make the contents of the S3 bucket publicly readable
+
+  ## This permission will make the contents of the S3 bucket publicly readable
+  ProductBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref S3MiroBannerAccepters
+      PolicyDocument:
+        Id: PublicReadPolicy
         Version: '2012-10-17'
         Statement:
-        - Effect: Allow
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
           Principal: "*"
           Action: s3:GetObject
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
