@@ -1,6 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
-Description: S3 Endpoint - sample application
+Description: S3 Miro Banner Accepters
 
 Resources:
   # HTTP API
@@ -65,6 +65,11 @@ Resources:
             - HEAD
           AllowedOrigins:
             - "*"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
 
   ## This permission will make the contents of the S3 bucket publicly readable
   ProductBucketPolicy:
@@ -80,7 +85,7 @@ Resources:
           Principal: "*"
           Action: s3:GetObject
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
-          Condition: {} 
+          Condition: {}
 
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
