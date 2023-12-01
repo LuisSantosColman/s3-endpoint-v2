@@ -4,7 +4,7 @@ Description: S3 Miro Banner Accepters
 
 Resources:
   # HTTP API
-  MyApi:
+  MiroBannerAPI:
     Type: AWS::Serverless::HttpApi
     Properties:
       # CORS configuration - this is open for development only and should be restricted in prod.
@@ -21,7 +21,7 @@ Resources:
           - "*"      
 
   ## Lambda functions
-  MiroBannersAcceptersRequestFunction:
+  MiroBannerAcceptersRequestFunction:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Type: AWS::Serverless::Function 
     Properties:
@@ -49,7 +49,7 @@ Resources:
           Properties:
             Path: /uploads
             Method: get
-            ApiId: !Ref MyApi  
+            ApiId: !Ref MiroBannerAPI  
 
   ## S3 bucket
   S3MiroBannerAccepters:
@@ -91,7 +91,7 @@ Resources:
 Outputs:
   APIendpoint:
     Description: "HTTP API endpoint URL"
-    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com"
+    Value: !Sub "https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com"
   S3MiroBannerAcceptersBucketName:
     Description: "S3 bucket that captures users who have accepted the T&C banner in Miro"
     Value: !Ref 'S3MiroBannerAccepters'
