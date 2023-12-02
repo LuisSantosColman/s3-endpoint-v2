@@ -65,6 +65,27 @@ Resources:
             - HEAD
           AllowedOrigins:
             - "*"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+
+  ## This permission will make the contents of the S3 bucket publicly readable
+  ProductBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties: 
+      Bucket: !Ref S3MiroBannerAccepters
+      PolicyDocument:
+        Id: PublicReadPolicy
+        Version: '2012-10-17'
+        Statement:
+        - Sid: PublicReadForGetBucketObjects
+          Effect: Allow
+          Principal: "*"
+          Action: s3:GetObject
+          Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
+          Condition: {}
 
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
