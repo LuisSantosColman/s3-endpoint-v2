@@ -39,7 +39,8 @@ Resources:
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
           Condition: 
             StringEquals:
-                aws:SourceOrigin: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'  # Your allowed origin
+                ## This CORS condition prevents the s3 bucket from being called/read from any other origin other than the s3 bucket origin itself (when CORS restrictions apply)
+                aws:SourceOrigin: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
 
   # HTTP API
   MiroBannerAPI:
@@ -93,11 +94,8 @@ Outputs:
     Description: 'HTTP API endpoint URL to get the s3 signed URL to write on the s3 bucket'
     Value: !Sub 'https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com'
   S3MiroBannerAcceptersBucket:
-    Description: 'S3 bucket that captures users who have accepted the T&C banner in Miro'
+    Description: 'Name of the S3 bucket that captures users who have accepted the T&C banner in Miro'
     Value: !Ref 'S3MiroBannerAccepters'
   S3MiroBannerAcceptersBucketGETEndpoint:
     Description: 'S3 bucket GET Endpoint to check/read if a user has already accepted the terms banner'
     Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com/users/{miro-user-id}'
-  S3TestValue1:
-    Description: 'Example to see how the URL is printed'
-    Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
