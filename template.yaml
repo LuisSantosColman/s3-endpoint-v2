@@ -7,6 +7,7 @@ Resources:
   S3MiroBannerAccepters:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: miro-banner-accepters
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -43,6 +44,7 @@ Resources:
   MiroBannerAPI:
     Type: AWS::Serverless::HttpApi
     Properties:
+      ApiName: miro-banner-accepters-api
       # CORS configuration - The s3 bucket origin will be added as the only allowed origin.
       # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-httpapi-httpapicorsconfiguration.html   
       CorsConfiguration:
@@ -58,6 +60,7 @@ Resources:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Type: AWS::Serverless::Function 
     Properties:
+      FunctionName: miro-banner-accepters-function
       CodeUri: getSignedURL/
       Handler: app.handler
       Runtime: nodejs16.x
