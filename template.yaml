@@ -100,4 +100,4 @@ Outputs:
     Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com/users/{miro-user-id}'
   S3TestValue1:
     Description: 'Example to see how the URL is printed'
-    Value: !Sub '${https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com}'
+    Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
