@@ -7,7 +7,6 @@ Resources:
   S3MiroBannerAccepters:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: miro-banner-accepters
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -17,7 +16,7 @@ Resources:
             - PUT
             - HEAD
           AllowedOrigins:
-            - !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
+            - '*'
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -38,7 +37,9 @@ Resources:
           Principal: "*"
           Action: s3:GetObject
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
-          Condition: {}
+          Condition: 
+            StringEquals:
+                aws:SourceOrigin: !Sub 'https://${S3MiroBannerAccepters.WebsiteURL}.s3.${AWS::Region}.amazonaws.com'  # Your allowed origin
 
   # HTTP API
   MiroBannerAPI:
@@ -60,7 +61,6 @@ Resources:
     # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Type: AWS::Serverless::Function 
     Properties:
-      FunctionName: miro-banner-accepters-function
       CodeUri: getSignedURL/
       Handler: app.handler
       Runtime: nodejs16.x
@@ -96,5 +96,8 @@ Outputs:
     Description: 'S3 bucket that captures users who have accepted the T&C banner in Miro'
     Value: !Ref 'S3MiroBannerAccepters'
   S3MiroBannerAcceptersBucketGETEndpoint:
-    Description: "S3 bucket GET Endpoint to check/read if a user has already accepted the terms banner"
+    Description: 'S3 bucket GET Endpoint to check/read if a user has already accepted the terms banner'
     Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com/users/{miro-user-id}'
+  S3TestValue:
+    Description: 'Example to see how the URL is printed'
+    Value: !Sub 'https://${S3MiroBannerAccepters.WebsiteURL}.s3.${AWS::Region}.amazonaws.com'
