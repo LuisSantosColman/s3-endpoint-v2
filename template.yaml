@@ -92,6 +92,6 @@ Outputs:
   APIendpoint:
     Description: "HTTP API endpoint URL"
     Value: !Sub "https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com"
-  S3MiroBannerAcceptersBucketName:
+  S3MiroBannerAcceptersBucket:
     Description: "S3 bucket that captures users who have accepted the T&C banner in Miro"
     Value: !Ref 'S3MiroBannerAccepters'
