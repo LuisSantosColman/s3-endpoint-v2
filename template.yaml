@@ -11,13 +11,13 @@ Resources:
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
-            - "*"
+            - '*'
           AllowedMethods:
             - GET
             - PUT
             - HEAD
           AllowedOrigins:
-            - "*"
+            - !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
