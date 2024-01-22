@@ -52,7 +52,8 @@ Resources:
           - OPTIONS
         AllowHeaders:
           - '*'
-        AllowOrigins: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
+        AllowOrigins: 
+          - !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
 
   ## Lambda function
   MiroBannerAcceptersRequestFunction:
@@ -89,7 +90,7 @@ Resources:
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
   APIendpoint:
-    Description: 'HTTP API endpoint URL'
+    Description: 'HTTP API endpoint URL to get the s3 signed URL to write on the s3 bucket'
     Value: !Sub 'https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com'
   S3MiroBannerAcceptersBucket:
     Description: 'S3 bucket that captures users who have accepted the T&C banner in Miro'
