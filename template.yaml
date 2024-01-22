@@ -32,7 +32,7 @@ Resources:
       MemorySize: 128
       Environment:
         Variables:
-          MiroBannerAccepters: !Ref S3MiroBannerAcceptersBocketUsersSubfolder
+          MiroBannerAccepters: !Ref S3MiroBannerAccepters
       Policies:
         - S3WritePolicy:
             BucketName: !Ref S3MiroBannerAccepters
@@ -70,20 +70,8 @@ Resources:
         BlockPublicPolicy: false
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
-  
-  ## S3 Bucket "Users" subfolder (this is where the User IDs of the users who accepted the terms banner will be stored)
-  S3MiroBannerAcceptersBocketUsersSubfolder:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub '${S3MiroBannerAccepters}/users'
 
-  ## S3 Bucket "Web Assets" subfolder (this is where you can host the "app.html" and "modal.html" files)
-  S3MiroBannerAcceptersBocketWebAssetsSubfolder:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub '${S3MiroBannerAccepters}/webassets'
-
-  ## S3 Bucket policy (This permission will make the contents of the S3 bucket publicly readable)
+  ## This permission will make the contents of the S3 bucket publicly readable
   ProductBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties: 
@@ -102,8 +90,8 @@ Resources:
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
   APIendpoint:
-    Description: 'HTTP API endpoint URL'
-    Value: !Sub 'https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com'
+    Description: "HTTP API endpoint URL"
+    Value: !Sub "https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com"
   S3MiroBannerAcceptersBucket:
-    Description: 'S3 bucket that captures users who have accepted the T&C banner in Miro'
+    Description: "S3 bucket that captures users who have accepted the T&C banner in Miro"
     Value: !Ref 'S3MiroBannerAccepters'
