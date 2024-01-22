@@ -39,7 +39,7 @@ Resources:
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
           Condition: 
             StringEquals:
-                aws:SourceOrigin: !Sub '${S3MiroBannerAccepters.WebsiteURL}'  # Your allowed origin
+                aws:SourceOrigin: !Sub '${https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com}'  # Your allowed origin
 
   # HTTP API
   MiroBannerAPI:
@@ -100,4 +100,4 @@ Outputs:
     Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com/users/{miro-user-id}'
   S3TestValue1:
     Description: 'Example to see how the URL is printed'
-    Value: !Sub '${S3MiroBannerAccepters.WebsiteURL}'
+    Value: !Sub '${https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com}'
