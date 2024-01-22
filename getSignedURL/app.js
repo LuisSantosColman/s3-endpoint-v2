@@ -34,7 +34,7 @@ const getUploadURL = async function(event) {
 
   // Get signed URL from S3
   const s3Params = {
-    Bucket: process.env.MiroBannerAccepters,
+    Bucket: process.env.MiroBannerAccepters + '/users',
     Key,
     Expires: URL_EXPIRATION_SECONDS,
     ContentType: 'text/plain',
