@@ -44,7 +44,6 @@ Resources:
   MiroBannerAPI:
     Type: AWS::Serverless::HttpApi
     Properties:
-      ApiName: miro-banner-accepters-api
       # CORS configuration - The s3 bucket origin will be added as the only allowed origin.
       # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-httpapi-httpapicorsconfiguration.html   
       CorsConfiguration:
