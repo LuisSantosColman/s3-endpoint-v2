@@ -90,8 +90,11 @@ Resources:
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
   APIendpoint:
-    Description: "HTTP API endpoint URL"
-    Value: !Sub "https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com"
+    Description: 'HTTP API endpoint URL'
+    Value: !Sub 'https://${MiroBannerAPI}.execute-api.${AWS::Region}.amazonaws.com'
   S3MiroBannerAcceptersBucket:
-    Description: "S3 bucket that captures users who have accepted the T&C banner in Miro"
+    Description: 'S3 bucket that captures users who have accepted the T&C banner in Miro'
     Value: !Ref 'S3MiroBannerAccepters'
+  S3MiroBannerAcceptersBucketGETEndpoint:
+    Description: "S3 bucket GET Endpoint to check/read if a user has already accepted the terms banner"
+    Value: !Ref 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com/users/{miro-user-id}'
