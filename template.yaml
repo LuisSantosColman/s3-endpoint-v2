@@ -71,7 +71,7 @@ Resources:
         IgnorePublicAcls: false
         RestrictPublicBuckets: false
 
-  ## This permission will make the contents of the S3 bucket publicly readable
+  ## S3 Bucket policy (This permission will make the contents of the S3 bucket publicly readable)
   ProductBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties: 
@@ -86,6 +86,18 @@ Resources:
           Action: s3:GetObject
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
           Condition: {}
+  
+  ## S3 Bucket "Users" subfolder (this is where the User IDs of the users who accepted the terms banner will be stored)
+  S3BocketUsersSubfolder:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${MyBucket}/users"
+
+  ## S3 Bucket "Web Assets" subfolder (this is where you can host the "app.html" and "modal.html" files)
+  S3BocketWebAssetsSubfolder:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "${MyBucket}/webassets"
 
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
