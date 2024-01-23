@@ -1,8 +1,3 @@
-Parameters:
-  MyRandomString:
-    Type: String
-    Default: !Sub "${AWS::AccountId}-${AWS::Region}-${AWS::StackName}-UUID-${AWS::UUID}"
-
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
 Description: S3 Miro Banner Accepters 
@@ -12,6 +7,7 @@ Resources:
   S3MiroBannerAccepters:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Join ['-', ['my-auto-scaling-group', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -21,7 +17,7 @@ Resources:
             - PUT
             - HEAD
           AllowedOrigins:
-            - '*'
+            - !Join ['', ['https://', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]], ['.s3.'], [!Ref AWS::Region], ['.amazonaws.com']]]
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -104,6 +100,3 @@ Outputs:
   S3_BUCKET_BASE_URL:
     Description: 'Base URL of the S3 bucket - it will be use to query/read users who have already accepted the terms modal'
     Value: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
-  TEST_VAR:
-    Description: 'Test Variable'
-    Value: !Sub 'https://${MyRandomString}.s3.${AWS::Region}.amazonaws.com'
