@@ -1,7 +1,7 @@
 Parameters:
   MyRandomString:
     Type: String
-    Default: !Sub "${AWS::StackName}-${AWS::Region}-${AWS::AccountId}-${Random}"
+    Default: !Sub "${Random}"
 
 AWSTemplateFormatVersion: 2010-09-09
 Transform: AWS::Serverless-2016-10-31
