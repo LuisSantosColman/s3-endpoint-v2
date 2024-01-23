@@ -7,7 +7,7 @@ Resources:
   S3MiroBannerAccepters:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join ['-', ['my-auto-scaling-group', !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+      BucketName: !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
