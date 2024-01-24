@@ -7,7 +7,7 @@ Resources:
   S3MiroBannerAccepters:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]
+      BucketName: !Join ['', ['s3-', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]]]
       CorsConfiguration:
         CorsRules:
         - AllowedHeaders:
@@ -17,7 +17,7 @@ Resources:
             - PUT
             - HEAD
           AllowedOrigins:
-            - !Join ['', ['https://', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]], '.s3.', !Ref AWS::Region, '.amazonaws.com']]
+            - !Join ['', ['https://s3-', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]], '.s3.', !Ref AWS::Region, '.amazonaws.com']]
       PublicAccessBlockConfiguration:
         BlockPublicAcls: false
         BlockPublicPolicy: false
@@ -38,15 +38,12 @@ Resources:
           Principal: "*"
           Action: s3:GetObject
           Resource: !Sub 'arn:aws:s3:::${S3MiroBannerAccepters}/*'
-          Condition: 
-            StringEquals:
-                ## This CORS condition prevents the s3 bucket from being called/read from any other origin other than the s3 bucket origin itself (when CORS restrictions apply)
-                aws:SourceOrigin: !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
 
   # HTTP API
   MiroBannerAPI:
     Type: AWS::Serverless::HttpApi
     Properties:
+      Name: !Join ['', ['apigateway-', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]]]
       # CORS configuration - The s3 bucket origin will be added as the only allowed origin.
       # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-httpapi-httpapicorsconfiguration.html   
       CorsConfiguration:
