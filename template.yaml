@@ -55,8 +55,6 @@ Resources:
           - '*'
         AllowOrigins: 
           - !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
-    Metadata:
-      ApiDescription: !Sub 'API Gateway for the Miro Terms Modal app. It handles requests to read and write on the S3 bucket ${S3MiroBannerAccepters}'
 
   ## Lambda function
   MiroBannerAcceptersRequestFunction:
@@ -90,8 +88,6 @@ Resources:
             Path: /uploads
             Method: get
             ApiId: !Ref MiroBannerAPI
-      Metadata:
-        FunctionDescription: !Sub 'Lambda function part of of the Miro Terms Modal app. It writes data on the S3 bucket ${S3MiroBannerAccepters}'
 
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
