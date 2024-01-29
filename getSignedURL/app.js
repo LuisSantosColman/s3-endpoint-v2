@@ -1,117 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <script id="miro-sdk2" src="https://miro.com/app/static/sdk/v2/miro.js"></script>
-        <link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAAAAACwAAAAAAQABAAA=">
-    </head>
-    <body>
-        <script id="variables" src="variables.js"></script>
-        <script>
-            window.userInfo = null;
-            async function callApi(url,method,body,token) {
-                const reqHeaders = {
-                    'accept': 'application/json',
-                    'cache-control': 'no-cache',
-                    'pragma': 'no-cache',
-                    //'authorization': token //Uncomment this line if you are using an authorization token
-                };
+/*
+  Copyright 2019 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this
+  software and associated documentation files (the "Software"), to deal in the Software
+  without restriction, including without limitation the rights to use, copy, modify,
+  merge, publish, distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+  INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+  PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+  HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+  OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+*/
 
-                const reqOptions = {
-                    method: method,
-                    headers: reqHeaders,
-                    body: body,
-                    mode: "cors"
-                };
-                
-                const reqResponse = await fetch(url, reqOptions)
-                    .then((res) => {
-                        return res['text']().then((data) => ({ status: res.status, body: data }));
-                    })
-                    .catch((error) => {
-                        return error;
-                    });
-                
-                return reqResponse;
-            }
+'use strict'
 
-            async function triggerModal(seconds) {
-                if (await miro.board.ui.canOpenModal()) {
-                    var timeStamp = Date.now();
-                    await miro.board.ui.openModal({
-                        url: `${MODAL_URL}?v=${timeStamp}`,
-                        width: MODAL_WITH,
-                        height: MODAL_HEIGHT,
-                        fullscreen: false
-                    });
-                }
-                checkModal(seconds);
-            };
+const AWS = require('aws-sdk')
+AWS.config.update({ region: process.env.AWS_REGION })
+const s3 = new AWS.S3()
 
-            async function getMiroTermsModalFrame() {
-                const parentFrames = window.parent.frames;
-                let miroModalTerms = null;
-                for(let a=0; a < parentFrames.length; a++) {
-                    var sameOrigin;
-                    try {
-                        sameOrigin = window.parent.frames[a].location.host == window.location.host;
-                    }
-                    catch(e) {
-                        sameOrigin = false;
-                    }
-                    if (sameOrigin) {
-                        if (parentFrames[a].location.href.indexOf('/modal.html') !== -1) {
-                            miroModalTerms = parentFrames[a];
-                            return miroModalTerms;
-                        }
-                    }
-                }
-                return miroModalTerms;
-            }
+// Change this value to adjust the signed URL's expiration
+const URL_EXPIRATION_SECONDS = 300
 
-            var delay = ms => new Promise(res => setTimeout(res, ms));
-            var holdScriptExecution = async (ms) => {
-                await delay(ms);
-            };
+// Main Lambda entry point
+exports.handler = async (event) => {
+  return await getUploadURL(event)
+}
 
-            async function checkModal(seconds) {
-                let canOpenModal = await miro.board.ui.canOpenModal();
-                if (!canOpenModal) {
-                    let miroModal = await getMiroTermsModalFrame();
-                    if (miroModal === null) {
-                        console.log(`There is another modal currently open - retrying in ${seconds} second(s)`);
-                        await holdScriptExecution(seconds * 1000);
-                        return await checkModal(seconds);
-                    }
-                    else {
-                        console.log(`Miro Terms Modal is still open - retrying in ${seconds} second(s)`);
-                        await holdScriptExecution(seconds * 1000);
-                        return await checkModal(seconds);
-                    }
-                }
-                else {
-                    console.log('No modals currently open - Checking...');
-                    const apiUrl = S3_BUCKET_BASE_URL + '/users/' + window.userInfo.id;
-                    const query = await callApi(apiUrl,'GET',null);
-                    if (query.status === 200) {
-                      console.log('Terms Modal has been accepted - Ending actions');
-                      return true;
-                    }
-                    else {
-                        triggerModal(seconds);
-                    }
-                }
-            }
+const getUploadURL = async function(event) {
+  const userID = event.queryStringParameters.id;
+  const Key = userID;
 
-            async function init() {
-                if (window.userInfo === null) {
-                  window.userInfo = await miro.board.getUserInfo();
-                }
-                /* Interval in seconds in which the app will check if the terms modal has been accepted */
-                SECONDS_TO_WAIT = +SECONDS_TO_WAIT; 
-                checkModal(SECONDS_TO_WAIT);
-            }
+  // Get signed URL from S3
+  const s3Params = {
+    Bucket: process.env.MiroBannerAccepters + '/users',
+    Key,
+    Expires: URL_EXPIRATION_SECONDS,
+    ContentType: 'text/plain'
+  }
 
-            init();
-        </script>
-    </body>
-</html>
+  console.log('Params: ', s3Params)
+  const uploadURL = await s3.getSignedUrlPromise('putObject', s3Params)
+
+  return JSON.stringify({
+    uploadURL: uploadURL,
+    Key
+  })
+}
