@@ -44,6 +44,7 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       Name: !Join ['', ['api-', !Join ['-', [!Ref AWS::StackName, !Select [4, !Split ['-', !Select [2, !Split ['/', !Ref AWS::StackId]]]]]]]]
+      Description: !Sub 'API Gateway for the Miro Terms Modal app. It handles requests to read and write on the S3 bucket ${S3MiroBannerAccepters}'
       # CORS configuration - The s3 bucket origin will be added as the only allowed origin.
       # See https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-property-httpapi-httpapicorsconfiguration.html   
       CorsConfiguration:
@@ -54,6 +55,8 @@ Resources:
           - '*'
         AllowOrigins: 
           - !Sub 'https://${S3MiroBannerAccepters}.s3.${AWS::Region}.amazonaws.com'
+    Metadata:
+      ApiDescription: !Sub 'API Gateway for the Miro Terms Modal app. It handles requests to read and write on the S3 bucket ${S3MiroBannerAccepters}'
 
   ## Lambda function
   MiroBannerAcceptersRequestFunction:
@@ -84,7 +87,9 @@ Resources:
           Properties:
             Path: /uploads
             Method: get
-            ApiId: !Ref MiroBannerAPI 
+            ApiId: !Ref MiroBannerAPI
+      Metadata:
+        FunctionDescription: !Sub 'Lambda function part of of the Miro Terms Modal app. It writes data on the S3 bucket ${S3MiroBannerAccepters}'
 
 ## Take a note of the outputs for deploying the workflow templates in this sample application
 Outputs:
